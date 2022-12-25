@@ -1,0 +1,181 @@
+---
+title: "Multiple Linear Regression"
+author: "Vladislav Kargin"
+date: "November 2022"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+This Rmd is partly based on an Rmd from the book "Introduction to Statistical Learning in R."
+
+## Data
+
+We will use the Boston data set is available in package MASS. (If this package not available on your computer, you can install it by running 
+install.packages("MASS").)
+
+```{r}
+rm(list = ls()) #remove everything in the environment 
+library(MASS)
+```
+
+Now Boston dataset is available as a part of package MASS
+
+The `Boston`  data set records `medv` (median house value) for $506$ census tracts in Boston. We will seek to predict `medv` using predictors such as `rmvar` (average number of  rooms per house), `age` (average age of houses), and `lstat` (percent of households with low socioeconomic status). [To find out more about the data set, one can type `?Boston`.]
+
+```{r}
+head(Boston)
+```
+## Multiple linear regression
+
+
+
+### Calculating the estimaties by hand
+Suppose we want to run the regression of medv on lstat and age variables. First we create vector of response and explanatory variables. 
+
+We will use the package tidyverse for selecting variables. (Install it, if it is not yet available.) We also need to convert dataframes to matrices, which is done using data.matrix( ) function. (This loses some information about types of variables.)
+
+```{r}
+library(tidyverse)
+y = select(Boston, medv)
+X = select(Boston, age, lstat)
+
+
+y = data.matrix(y)
+X = data.matrix(X)
+
+
+#adding a column of ones
+X = cbind(matrix(data = 1, nrow = nrow(X), ncol = 1), X)
+```
+
+Now the matrices $X^t X$ and $X^t y$ must be calculated. This can be done in two ways by either using the transposition and matrix multiplication functions, or by using the crossproduct function. 
+
+```{r}
+
+t(X) %*% X #or, altenatively
+crossprod(X, X) #or, even simpler
+crossprod(X)
+```
+Now it is easy to find the estimators. 
+
+```{r}
+beta = solve(crossprod(X), crossprod(X,y))
+beta
+```
+What about standard errors? These are square roots of diagonal terms in the matrix $\sigma^2 (X^t*X)^{-1}$.
+```{r}
+sigma = sqrt(crossprod(y - X %*% beta)/(nrow(X) - 3))
+sigma
+
+
+#We need the inverse function from matlib package
+library(matlib)
+inv(crossprod(X))
+
+#Alternatively, tthe inversion can be done by solve function as well
+solve(t(X) %*% X)
+
+
+sigma[1] * inv(crossprod(X))**(1/2)
+
+```
+The diagonal terms here are the standard errors of the estimators. 
+
+
+
+### Using the built - in function lm()
+
+
+The previous calculations have shown that in principle, the linear regression can be easily calculated in R by using the matrix functions. However it is much more convenient to use the built-in function for muultiple linear regression. It is called lm(), for multiple linear regression. Here arerr some details.   
+
+In order to fit a multiple linear regression model using least squares, we use the `lm()` function. The syntax {\R{lm(y $\sim$ x1 + x2 + x3)}} is used to fit a model with three predictors, `x1`, `x2`, and `x3`.
+The `summary()` function now outputs the regression coefficients for all the predictors.
+We use option Boston to indicate that variables medv, lstat, and age are the variables in Boston dataset, not in global namespace. 
+
+```{r}
+lm.fit <- lm(medv ~ lstat + age, data = Boston)
+summary(lm.fit)
+```
+The `Boston` data set contains many variables, and so it would be cumbersome to have to type all of these in order to perform a regression using all of the predictors.
+Instead, we can use the following short-hand:
+
+```{r}
+lm.fit <- lm(medv ~ ., data = Boston)
+summary(lm.fit)
+```
+What if we would like to perform a regression using all of the variables but one?  For example, in the above regression output,  `age` and `indus' have high $p$-values. So we may wish to run a regression excluding these predictors.
+ The following syntax results in a regression using all predictors except `age`.
+
+```{r}
+lm.fit1 <- lm(medv ~ . - age - indus, data = Boston)
+summary(lm.fit1)
+```
+
+Alternatively, the `update()` function can be used.
+
+```{r}
+lm.fit1 <- update(lm.fit, ~ . - age - indus)
+```
+
+## Data matrix from the model
+
+One other useful feature of the lm function is that we can extract the data matrix from the model. This is useful if one wants to do some additional calculations besides those that are in the sdandard interface. (Note the option x in the lm function)
+
+```{r}
+lm.fit <- lm(medv ~ lstat + age, data = Boston, x = T, y = T)
+X <- lm.fit$x
+y <- lm.fit$y
+t(X) %*% X #this is the matrix of cross-products 
+solve(crossprod(X), crossprod(X, y))
+```
+
+
+
+## Interaction Terms
+
+It is easy to include interaction terms in a linear model using the `lm()` function. The syntax `lstat:black` tells `R` to include an interaction term between `lstat` and `black`.
+The syntax `lstat * age` simultaneously includes `lstat`, `age`, and the interaction term `lstat`$\times$`age` as predictors; it is a shorthand for `lstat + age + lstat:age`.
+
+```{r}
+summary(lm(medv ~ lstat * age, data = Boston))
+```
+
+## Non-linear Transformations of the Predictors
+
+The `lm()` function can also accommodate non-linear transformations of the predictors. For instance, given a predictor $X$, we can create a predictor $X^2$ using
+ `I(X^2)`. The function `I()` is needed since the `^` has a special meaning in a formula object; wrapping as we do allows the standard usage in `R`, which is to raise `X` to the power `2`. We now
+perform a regression of `medv` onto `lstat` and `lstat^2`.
+
+```{r}
+lm.fit2 <- lm(medv ~ lstat + I(lstat^2), data = Boston)
+summary(lm.fit2)
+```
+
+The near-zero $p$-value associated with the quadratic term suggests that it leads to an improved model.
+
+
+In order to create a cubic fit, we can include a predictor of the form `I(X^3)`. However, this approach can start to get cumbersome for higher-order polynomials. A better approach involves using the `poly()` function to create the polynomial within `lm()`. For example, the following command produces a
+fifth-order polynomial fit:
+
+```{r}
+lm.fit5 <- lm(medv ~ poly(lstat, 5), data = Boston)
+summary(lm.fit5)
+```
+
+This suggests that including additional  polynomial terms, up to fifth order, leads to an improvement in the model fit! However, further investigation of the data reveals that no polynomial terms beyond fifth order have significant $p$-values
+in a regression fit.
+
+ By default, the `poly()` function orthogonalizes the predictors:
+ this means that the features output by this function are not simply a
+ sequence of powers of the argument. However, a linear model applied to the output of the `poly()` function will have the same fitted values as a linear model applied to the raw polynomials (although the coefficient estimates, standard errors, and p-values will differ). In order to obtain the raw polynomials from the `poly()` function,  the argument `raw = TRUE` must be used.
+
+Of course, we are in no way restricted to using polynomial transformations of the predictors. Here we try a log transformation.
+
+```{r}
+summary(lm(medv ~ log(rm), data = Boston))
+```
+

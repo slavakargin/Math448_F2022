@@ -1,0 +1,95 @@
+---
+title: "Simple Linear Regression"
+author: "Vladislav Kargin"
+date: "November 2022"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Linear regression by direct calculations
+
+Using a chemical procedure called differential pulse polarography, a chemist measured the peak current generated (in microamperes, $\mu$A) when solutions containing different amounts of nickel (measured in parts per billion, ppb) are added to different portions of the same buffer.
+
+
+First, let us input the response and explanatory variables and let us create a scatter plot
+to see if there is a dependence:
+```{r}
+y = c(0.095,0.174,0.256,0.348,0.429,0.500,0.580,0.651,0.722)
+
+x = c(19.1,38.2,57.3,76.2,95,114,131,150,170)
+
+plot(x,y,ylab="peak current",xlab="amounts of nickel")
+```
+Now let us calculate the estimate of $\beta_1$
+
+```{r}
+n = length(x)
+Sxx = sum((x - mean(x))^2)
+Sxy = sum((x - mean(x))*(y - mean(y)))
+beta1hat = Sxy/Sxx
+print(Sxx)
+print(Sxy)
+print(beta1hat)
+```
+
+Now, suppose we want to test the null hypothesis that $\beta_1 = 0$. 
+
+In order to do the test we need to estimate $\sigma$. For this purpose we calculate
+SSE. (We also illustrate another formula for SSE: Syy - Sxy^2/Sxx)
+```{r}
+SSE = sum((y - mean(y) - beta1hat *(x - mean(x)))^2)
+SSE
+Syy = sum((y - mean(y))^2)
+SSE = Syy - Sxy^2/Sxx
+SSE
+sigma_hat = sqrt(SSE/(n - 2))
+sigma_hat
+```
+Now we can construct the test statistic 
+```{r}
+T = (beta1hat - 0)/(sigma_hat/sqrt(Sxx))
+T
+```
+Here it is obvious that null hypothesis can be rejected. Otherwise, we would need to calculate a p-value by using the cumulative distribution function of the test statistic. 
+
+```{r}
+2* pt(T,n-2,lower.tail = F)
+```
+
+## Linear regression via call to "lm" function
+
+All these calculations have been preprogrammed in R, though. 
+
+```{r}
+model.lm = lm(y~x)
+smry = summary(model.lm)
+print(smry) 
+```
+You can see many familiar numbers in the R output. Forr example $\sigma_hat$ is calculated unde the name residual standard error, so we could calculate SSE as this number multiplied by (n - 2). Alternatively, it is useful to know that we can extract fitted values directly from the output:
+
+```{r}
+SSE_check = sum((y - fitted(model.lm))^2) 
+SSE
+SSE_check
+```
+You ran also see that R calculated the t-statistic and p-values needed to test the hypothesis that a parameter is equal to zero. If the p-value less that $5\%$, R denotes this parameter with a star, if it is smaller than $1\%$, then the parameter gets 2 stars and our slope parameter got 3 stars as very highly significant.
+
+(Note that if you wanted to test one sided hypothesis, then you would need to divide the p-value by 2.)
+
+If we want to test if $\beta_1$ is equal to some other value, for example 0.004, we can either extract the coefficients and standard errors from the regression output, calculate the
+statistic and p-value
+```{r}
+z = smry$coefficients
+z
+T = (z[2,1] - 0.004)/z[2,2]
+T
+2*pt(T, n-2, lower.tail = F)
+```
+Alternatively, we can re-parameterize the model and run the linear regression again:
+```{r}
+summary(lm((y - 0.004*x ~ x)))
+```
+Note that this gives the same p-value $0.00738$

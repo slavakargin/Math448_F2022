@@ -1,0 +1,81 @@
+---
+title: "Hypothesis Tests"
+author: "Vladislav Kargin"
+date: "October 2022"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, out.width="50%")
+```
+
+
+For these illustrations, we will use the data from the book by Chihara and Hestenberg "Mathematical Statistics with Resampling and R". The data available at https://sites.google.com/site/chiharahesterberg/data2 or https://www2.math.binghamton.edu/p/people/kargin/math448/start
+
+
+## One-sample t-test
+
+(The original data was from https://www.bgs.ac.uk/geological-data/datasets/. However, it is not available there anymore)
+
+Here is the example:
+
+A study recommends that the maximum concentration of arsenic in irrigation water be 100 𝜇g/l to prevent a buildup of the chemical that might harm future crop production. How does the water in Bangladesh measure up to this recommendation? Let 𝜇 denote the true mean level of arsenic in Bangladesh wells. We wish to test H0 ∶ 𝜇 = 100 versus HA ∶ 𝜇 > 100.
+
+```{r}
+Bangladesh <- read.csv("./data/bangladesh.csv")
+
+head(Bangladesh)
+summary(Bangladesh)
+
+
+result <- t.test(Bangladesh$Arsenic, mu = 100, alt = "greater", conf.level = 0.95)
+result
+```
+
+
+
+Note that p-value is 0.08, so we cannot reject the null hypothesis at $5\%$ level. We can also see this conclusion from the fact that the (one-sided) confidence interval contains the value $100$. 
+
+## Two-sample t-test
+
+
+The Centers for Disease Control and Prevention (CDC) maintains a database on all babies born in a given year (http://wonder.cdc.gov/natality-current.html).One data set that we will investigate consists of a random sample of 1009 babies born in North Carolina during 2004.
+
+Is there a real difference in the mean weights of North Carolina babies born to nonsmoking and smoking mothers in 2004?
+
+```{r}
+data <- read.csv("./data/NCbirths2004.csv")
+head(data)
+summary(data)
+
+babies <- as.data.frame(data, stringsAsFactors = TRUE)  # Convert all columns to factor
+              
+head(babies)
+summary(babies)
+
+t.test(Weight ~ Tobacco, data = babies, alt = "greater", var.equal = F) #we do not assume that variances are the same, which is the default behavior. 
+```
+
+p-value is very small, so we can reject the null hypothesis at $\alpha = 0.01$ and conclude that there is a real difference in baby weights for babies born to nonsmoking and smoking mothers. 
+
+Inciedentally, we can test whether the variances are the same. 
+
+```{r}
+var.test(Weight ~ Tobacco, data = babies) 
+```
+
+p-value indicates that we cannot reject the hypothesis that variances are the same. 
+
+### Two-sample test for proportions
+
+Do men and women differ in their beliefs about an afterlife? In the 2002 General Social Survey (see case study in Section 1.7 of Chihara-Hestenberg book), participants were asked this question, and of the 684 women who responded, 550 said yes (80.40%), compared to 425 of the 563 men (75.49%).
+
+```{r}
+prop.test(c(550, 425), c(684, 563), correct = TRUE) #this is done with continuity correction (default behavior)
+
+```
+According to the p-value, we can reject the null hypothesis at $5\%$ significance level but not at $1\%$ level. Some supportive evidence exists but it is not very strong. 
+
+
+
+

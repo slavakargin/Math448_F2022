@@ -1,0 +1,91 @@
+---
+title: "Illustrations for consistency and bias"
+author: "Vladislav Kargin"
+date: 'September 2022'
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Consistency of estimators
+
+### Sample mean is a consistent estimator
+
+In this example we are going to illustrate the consistency property of the sample mean estimator. 
+
+
+Generate a large sample of normal random variables $X_i$ with mean $\theta = 10$ and variance $4$ (standard deviation = $2$). 
+Create and plot a sequence of estimators for $\theta$, which would have the form $\widehat \theta = \frac{1}{n}\sum_{i = 1}^n X_i$, where $n$ is growing from $1$ to $N$. 
+
+```{r}
+N = 4000
+X = rnorm(N, mean = 10, sd = 2)
+theta = rep(0, N)
+for (n in 1:N) {
+ theta[n] = sum(X[1:n])/n 
+}
+plot(1:N, theta, type = 's', frame.plot = FALSE)
+lines(1:N, rep(10,N), col = "red")
+```
+
+Repeat the previous exercise 5 times.
+```{r}
+M = 5
+#initialize the plot
+X = rnorm(N, mean = 10, sd = 2)
+theta = rep(0, N)
+for (n in 1:N) {
+ theta[n] = sum(X[1:n])/n 
+}
+plot(1:N, theta, type = 's', ylim = c(9,11), frame.plot = FALSE)
+lines(1:N, rep(10,N), col = "red")
+
+#add more lines
+for (c in 1:M - 1){
+X = rnorm(N, mean = 10, sd = 2)
+theta = rep(0, N)
+for (n in 1:N) {
+ theta[n] = sum(X[1:n])/n 
+}
+lines(1:N, theta, type = 's')
+}
+```
+
+This example illustrates that as $n$ grows the estimators typically converge to the true value of the parameter. Formally, the convergence holds in probability and this property is called consistency. 
+
+
+## Bias of estimators
+
+Here we look at a different property of estimators, the bias. We are going to look at the sample variance as the estimator fo the population variance and the sample standard deviation as the estimato fo the population standard deviation. Both of these estimators are consistent. (You can use the methods from the previous example to check it numerically.) We are interested in the question whether they are unbiased. 
+
+### Sample variance estimator is unbiased
+
+First, let us show an alternative way to perform a simulation. 
+In the previous example, on consistency, we simulated a sequence of estimators by using a "for" loop. Here we use an alternative method. We create a matrix, so that its columns are data samples. Then we apply an estimator to each column. 
+
+```{r}
+set.seed=1111;
+N = 10000;
+n = 5
+X=matrix(runif(n*N), ncol=N); 
+12*mean(apply(X, 2, var));
+```
+The first line in this code snippet create a 2-by-10000 matrix whose elements are random variables uniformly distributed between 0 and 1. 
+Recall that the expectation of such a variable is 1/2 and the variance is 1/12.
+In the fourth line we apply var operator to the columns of matrix X. (The second argument is set to 2 which indicates that var function should be applied to columns.)
+
+Note that in R "var" is defined using $\frac{1}{n-1}$ so the statistical theory predicts that the estimator is an unbiased estimator of the variance.
+
+We calculate the mean of these estimates and multiply it by 12. Note that the result is quite close to 1. 
+
+
+### Sample standard deviation estimator is biased. 
+
+Next we apply the sd function, which is simply the square root of the sample variance. We multiply it by $\sqrt{12}$. After this normalization, an unbiased estimator of the standard deviation would give a quantity close to 1. 
+
+```{r}
+sqrt(12) * mean(apply(X, 2, sd))
+```
+We can see that there is a considerable ($\approx 5\%$) bias in the sd estimator. 

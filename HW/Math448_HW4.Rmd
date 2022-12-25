@@ -1,0 +1,84 @@
+---
+title: "Math448 HW4"
+author: "your name"
+date: "December 2022"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Infection Risk in Hospitals 
+
+
+Data from $n = 113$ hospitals in the United States were collected in order to assess factors related to the likelihood that a hospital patient acquires an infection while hospitalized. The variables include: infection risk (in percent), average length of patient stay (days),  average patient age(years), measure of how many x-rays are given in the hospital, and others.
+
+(Data source: Applied Regression Models, (4th edition), Kutner, Neter, and Nachtsheim; it is in the file "hospital_infct.txt" available in the resource section of the course at Piazza.)
+
+### Task 1
+* Read-in the data and look at the several first lines of the data using head() command
+* Run the linear regression of infection risk on all available predictors and print the summary.
+* What are your conclusions? Which predictors are useful? How well does the regression fit the data?
+ 
+```{r}
+#riskdata = read(...)
+
+#head(...)
+
+#model.full = lm(...)
+#summary(...)
+```
+You answer is here. 
+
+### Task 2
+
+Now run the regression on a smaller set of predictors, namely, Stay, Culture and Xray, and use the results to predict the infection risk for a hospital for which the average length of stay is 10 days, Culture = 14 and Xray = 82.
+
+What is the prediction interval?
+
+```{r}
+#model.reduced = lm(...)
+#summary(...)
+
+#predict(...)
+```
+Your answer is herre
+
+### Task 3
+Compare the full and reduced model by calculating the F-statistic and the relevant p-value. 
+What is your conclusion?
+
+```{r}
+
+
+```
+Your answer is here.
+
+### Task 4
+
+This is an exercise about the matrix formulation of the regression model. 
+Continue to use the model with variables Stay, Culture, Xray
+
+* Construct y and X. (This can be done either directly or by using options 
+y = T, x = T in the lm function).
+* Calculate the coefficients of the regression by matrix operations 
+* Calculate the prediction for Stay =10,  Culture = 14 and Xray = 82.
+
+```{r}
+#Extract y and X
+#model = lm(..., x = T, y = T)
+#X = ...
+#y = ...
+
+#calculate beta 
+#beta = solve(...)
+#beta
+
+#calculate the prediction as $x.new^t \beta$ 
+#x.new = c(....)
+#y.new = ....
+#y.new
+```
+ 
+

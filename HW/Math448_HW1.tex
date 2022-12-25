@@ -1,0 +1,100 @@
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Do not alter this block (unless you're familiar with LaTeX)
+\documentclass{article}
+\usepackage[margin=1in]{geometry} 
+\usepackage{amsmath,amsthm,amssymb,amsfonts, fancyhdr, color, comment, graphicx, environ}
+\usepackage{xcolor}
+\usepackage{mdframed}
+\usepackage[shortlabels]{enumitem}
+\usepackage{indentfirst}
+\usepackage{hyperref}
+\hypersetup{
+    colorlinks=true,
+    linkcolor=blue,
+    filecolor=magenta,      
+    urlcolor=blue,
+}
+\usepackage{listings}
+
+\pagestyle{fancy}
+
+\newenvironment{problem}[2][Problem]
+    { \begin{mdframed}[backgroundcolor=gray!20] \textbf{#1 #2} \\}
+    {  \end{mdframed}}
+% Define solution environment
+\newenvironment{solution}
+    {\textit{Solution:}}
+    {}
+
+\renewcommand{\qed}{\quad\qedsymbol}
+
+%%%%%%%%%%%
+%A shortcut for alignment environment
+%%%%%%%%%%%
+\newcommand{\bal}[1]{\begin{align*}#1\end{align*}}
+\DeclareMathOperator{\nullspace}{nullspace}
+\DeclareMathOperator{\range}{range}
+%%%%%%%%%%%
+%A shortcut for bmatrix enviromnent
+%%%%%%%%%%%
+\newcommand{\bmatr}[1]{\begin{bmatrix}#1\end{bmatrix}}
+
+%%%%%%%%%%%%%%
+%symbols
+%%%%%%%%%%%%%
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\E}{\mathbb{E}}
+\newcommand{\bP}{\mathbb{P}}
+\renewcommand{\P}{\bP} %another version of probability
+\newcommand{\Var}{\mathbb{V}\mathrm{ar}}
+\newcommand{\Cov}{\mathrm{Cov}}
+\newcommand{\Cor}{\mathrm{Cor}}
+\newcommand{\ovln}{\overline}
+\def\av{\boldsymbol a}
+\def\bv{\boldsymbol b}
+\def\cv{\boldsymbol c}
+\def\qv{\boldsymbol q}
+
+
+
+% prevent line break in inline mode
+\binoppenalty=\maxdimen
+\relpenalty=\maxdimen
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%Fill in the appropriate information below
+\lhead{Your name: }
+\rhead{Math 448 Fall 2022} 
+\chead{HW1}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{document}
+
+\begin{mdframed}[backgroundcolor=blue!20]
+Homework should be written neatly and clearly explained. 
+\end{mdframed}
+
+
+\begin{problem}{1}
+Let $X_1$, $X_2$, $X_3$, \ldots be independent random variables uniformly distributed on the interval $[0, 2]$.
+\begin{enumerate}
+\item
+What are $\mu$, the mean of $X_1$, and $\sigma^2$, the variance of $X_1$?
+\item
+Simulate $\frac{1}{100} \sum_{i = 1}^{100} \frac{X_i - \mu}{\sigma}$, $10000$ times and give a histogram of the results.
+\item 
+Simulate $Y_n = \frac{1}{n} \sum_{i = 1}^{n} \frac{X_i - \mu}{\sigma}$ for various $n$ and plot the histograms. What happens with the histogram of $Y_n$ when $n$ grows? 
+
+If we want the convergence in distribution, then we need to scale $Y_n$, that is, we should multiply $Y_n$ by some $a_n$. What $a_n$ should be chosen so that $Z_n = a_n Y_n$ converge in distribution to a standard normal random variable? Plot the histogram of $Z_n$ for $n = 1000$. 
+ \end{enumerate}
+\end{problem}
+
+\begin{solution}
+
+\end{solution}
+
+
+
+
+ \end{document}

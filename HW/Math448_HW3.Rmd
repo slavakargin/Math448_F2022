@@ -1,0 +1,69 @@
+---
+title: "Math 448 HW3"
+author: "Vladislav Kargin"
+date: 'November 2022'
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+
+### Problem 1
+
+The data set "Alelager" contains calories and alcohol content (by volume) for a sample of domestic and international ales and lager beers (per 12 oz). (The dataset is from the book by Chihara and Hesterberg and available for download at Piazza.)
+
+The goal is to investigate the hypothesis that ales have more calories than lagers. 
+
+* Read-in the data and look at the several first lines of the data using head() command
+* Convert character variables to factors
+* Show the summary statistics for the data bby using summary() command
+* Test the hypothesis that ales have more calories than lagers 
+
+What is the p-value and what is your conclusion at 5% significance level?
+
+```{r}
+#data <- read.csv(...)
+#head(..)
+
+## Convert all character columns to factor
+#data <- as.data.frame(...)
+#summary(...)
+#t.test(...)
+```
+ 
+ Your answer here.
+
+### Problem 2
+
+The data set Recidivism contains all offenders convicted of either a misdemeanor or felony who were released from an Iowa prison during the 2010 fiscal year (ending in June). There were 17 022 people released in that period, of whom 5386 were sent back to prison in the following 3 years (through the end of the 2013 fiscal year). 
+The data is from Chihara - Hesterberg book and available for download on Piazza
+
+* Load the data and examine first several lines by using the head()
+* Convert the character variables to factors 
+* Show the summary statistics of the data
+
+```{r}
+#data <- read.csv(...)
+#head(...)
+## Convert all character columns to factor
+#data <- as.data.frame(...)
+#summary(...)
+```
+
+
+The recidivism rate for those under the age of 25 years was 36.5% compared with 30.6% for those 25 years or older. Does this indicate a real difference in the behavior of those in these age groups, or could this be explained by chance variability?
+
+* perform the test for equality of the proportions on 5% significance level. 
+(Your can use the data on the sample sizes from the summary table, or you can use 
+the table() command suggested below)
+
+What is the p-value and what is your conclusion?
+
+```{r}
+#table(data$Age25, data$Recid) #data is the name of your dataset
+#prop.test(...)
+```
+Your answer here

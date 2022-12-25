@@ -1,0 +1,93 @@
+---
+title: "Confidence Intervals"
+author: "Vladislav Kargin"
+date: 'September 2022'
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Confidence intervals
+
+This is a lab about small sample confidence intervals. These intervals can be also used in the large sample case, where the t-distribution will be very close to the standard normal distribution.
+
+### Small sample confidence interval, one sample. 
+
+**An example about lobsters**
+
+The carapace lengths of ten lobsters examined in a study of the infestation of the 
+\emph{Thenus orientalis} lobster by two types of barnacles, \emph{Octolasmis tridens} and 
+\emph{O. lowei}, are given in the following table. (Table is attached.)
+Find a $95\%$ confidence interval for the mean carapace length (in millimeters, mm) of \emph{T. orientalis} lobsters caught in the seas in the vicinity of Singapore.
+
+
+This is a small sample estimation problem for $\mu$. 
+We can calculate the sample standard deviation eiher directly or by using a built-in function 
+
+```{r}
+x = c(78,66,65,63,60,60,58,56,52,50)
+mean(x) # sample mean
+
+sqrt(sum((x-60.8)^2)/(10-1))  
+sd(x)
+```
+
+
+Now the confidence interval is 
+```{r}
+#Confidence interval:
+cat('(',mean(x)-qt(0.975,9)*sd(x)/sqrt(10),',',mean(x)+qt(0.975,9)*sd(x)/sqrt(10),')',sep = "")
+```
+
+Answer: $60.8\pm 5.700955$. Note that we have divided by $\sqrt{9}$ when we estimated $S$ and then again by $\sqrt 10$ when we estimated $\sigma_{\overline X}$. Do not forget the second division.
+
+Alternatively, we can get the confidence interval by using the function t.test, which is used for testing hypothesis about the mean of a sample (or about the equality of means of two samples).
+
+```{r}
+t.test(x,conf.level = 0.95)
+```
+
+### Small sample confidence interval, two-sample example
+
+To reach maximum efficiency in performing an assembly operation in a manufacturing plant, new employees require approximately a 1-month training period. A new method of training was suggested, and a test was conducted to compare the new method with the standard procedure. Two groups of nine new employees each were trained for a period of 3 weeks, one group using the new method and the other following the standard training procedure. The length of time (in minutes) required for each employee to assemble the device was recorded at the end of the 3-week period. The resulting measurements are as shown in Table 8.3 (see the book). Estimate the true mean difference $(\mu_1 - \mu_2)$ with confidence coefficient .95. Assume that the assembly times are approximately normally distributed, that the variances of the assembly times are approximately equal for the two methods, and that the samples are independent.
+
+```{r}
+x = c(32,37,35,28,41,44,35,31,34)
+y = c(35,31,29,25,34,40,27,32,31)
+
+t.test(x,y, conf.level = 0.95, var.equal = T)
+
+t.test(x,y, conf.level = 0.95, var.equal = F) #now we do not assume that variance are equal. Note that the degrees of freedom is not integer anymore. 
+
+```
+
+## Confidence interval for variance
+
+ Suppose that you wished to describe the variability of the carapace lengths of this population of lobsters. Find a $90\%$ confidence interval for the population variance $\sigma^2$.
+ 
+The inteval is 
+ 
+```{r}
+x = c(78,66,65,63,60,60,58,56,52,50)
+n = length(x)
+(n - 1)*var(x)/qchisq(0.95,9)
+(n - 1)*var(x)/qchisq(0.05,9)
+```
+
+This can be done also with the variance one-sample test.
+However, in order to use it, we have to import the library of statistical 
+functions named "EnvStats". If it is not on your computer, 
+you should install it either by using the command "install.packages"
+or by using the Tools menu.
+
+```{r} 
+#install.packages("EnvStats") #This needs to be done only once on your computer
+```
+
+```{r}
+library(EnvStats)
+
+varTest(x, conf.level = 0.90)
+```
